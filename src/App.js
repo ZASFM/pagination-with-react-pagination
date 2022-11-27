@@ -2,47 +2,17 @@ import React,{useState,useEffect} from 'react';
 import ReactPaginate from 'react-paginate';
 
 const App=()=>{
-  const [items,setItems]=useState([
-    {
-     id:1,
-     name:"first",
-     email:"first.first",    
-     message:"laudantium enim quasi est quidem magnam voluptate ipsam",
-    },
-    {
-      id:2,
-      name:"Second",
-      email:"Second.Second",    
-      message:"laudantium enim quasi est quidem magnam voluptate ipsam",
-   },
-   {
-    id:3,
-    name:"Third",
-    email:"Third.Third",    
-    message:"laudantium enim quasi est quidem magnam voluptate ipsam",
-   },
-   {
-    id:4,
-    name:"Fourth",
-    email:"Fourth.Fourth",    
-    message:"laudantium enim quasi est quidem magnam voluptate ipsam",
-   },
-   {
-    id:5,
-    name:"Fifth",
-    email:"Fifth.Fifth",    
-    message:"laudantium enim quasi est quidem magnam voluptate ipsam",
-   },
-  ]);
+  const [items,setItems]=useState([]);
 
-  const handlePageClick=(data)=>{
-    
-    console.log(data.selected);
+  const handlePageClick=async(data)=>{
+    let currentPage=data.selected+1;
+    const comments=await fetchComments(currentPage);
+    setItems(comments);
   }
 
   useEffect(()=>{
     const getComments=async()=>{
-      const resp=await fetch(`http://localhost:3004/comments?_page=1&_limit=12`);
+      const resp=await fetch(`https://jsonplaceholder.typicode.com/comments?_page=1&_limit=12`);
       const data=await resp.json();
       setItems(data);
     }
@@ -50,6 +20,12 @@ const App=()=>{
   },[])
 
   console.log(items);
+
+  const fetchComments=async(currentPage)=>{
+    const resp=await fetch(`https://jsonplaceholder.typicode.com/comments?_page=${currentPage}&_limit=12`)
+    const data=await resp.json();
+    return data;
+  }
 
    return (
      <div className='container'>
@@ -62,7 +38,7 @@ const App=()=>{
             <div className='card-body'>
               <h5 className='card-title text-center h2'>{`Id: ${item.id}` }</h5>
               <h6 className='card-subtitle mb-2 text-muted text-center'>{`Email: ${item.email}` }</h6>
-              <p className='card-text'>{`Comment: ${item.message}` }</p>
+              <p className='card-text'>{`Comment: ${item.body}` }</p>
             </div>
           </div>
         </div>

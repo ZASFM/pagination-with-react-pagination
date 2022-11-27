@@ -1,0 +1,4 @@
+onPageChange={handleChange};
+const handleChange=(data)=>{
+   log(data)//This will be the selected number 
+}

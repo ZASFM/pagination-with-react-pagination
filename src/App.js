@@ -3,6 +3,7 @@ import ReactPaginate from 'react-paginate';
 
 const App=()=>{
   const [items,setItems]=useState([]);
+  const [pageCount,setPageCount]=useState(0);
 
   const handlePageClick=async(data)=>{
     let currentPage=data.selected+1;
@@ -14,12 +15,13 @@ const App=()=>{
     const getComments=async()=>{
       const resp=await fetch(`https://jsonplaceholder.typicode.com/comments?_page=1&_limit=12`);
       const data=await resp.json();
+      const total=resp.headers.get('x-total-count');
+      setPageCount(Math.ceil(total/12));
       setItems(data);
     }
     getComments();
   },[])
 
-  console.log(items);
 
   const fetchComments=async(currentPage)=>{
     const resp=await fetch(`https://jsonplaceholder.typicode.com/comments?_page=${currentPage}&_limit=12`)
@@ -33,7 +35,7 @@ const App=()=>{
      <div className='row m-4'>
      {items && items.map(item=>{
        return (
-        <div className='col-sm-6 col-md-4 v my-4'>
+        <div className='col-sm-6 col-md-4 v my-4' key={item.id}>
           <div className='card shadow-sm w-100' style={{minHeight:225}}> 
             <div className='card-body'>
               <h5 className='card-title text-center h2'>{`Id: ${item.id}` }</h5>
@@ -51,7 +53,7 @@ const App=()=>{
            previousLabel={"Previous"}
            nextLabel={"Next"}
            breakLabel={"---"}
-           pageCount={15}
+           pageCount={pageCount}
            marginPagesDisplayed={2}
            pageRangeDisplayed={3}
            onPageChange={handlePageClick}
